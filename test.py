@@ -1,4 +1,6 @@
 import pyshark
+import nmap
+
 
 def analyse_packets(data):
     
@@ -55,6 +57,25 @@ def analyse_packets(data):
     return suspicious_packets     
 
 
+# Nmap scan 
+def perform_nmap_scan(ip):
+    
+    # Initialize nmap scanner
+    
+    scanner = nmap.PortScanner()
+    print(f"Performing Nmap scan on {ip}...")
+    try:
+        scan_result = scanner.scan(ip, arguments= '-Pn -sS -T4')
+        return scan_result['scan'][ip] if ip in scan_result['scan'] else None
+    
+    except Exception as e:
+        print(f"Error during Nmap scan: {e}")
+        return None
+
+
+
+
+
 # Capture live packets on the specified interface
 
 capture = pyshark.LiveCapture(interface='Wi-Fi')
@@ -76,10 +97,29 @@ if suspicious_activity:
     for activity in suspicious_activity:
         print(f"{activity['type']}: {activity['details']}")
 
-    # Saving suspicious activity to file
+    
+    # Perform Nmap scan for each suspicious source IP
+
+    unique_ips = {activity['details'].split()[-1] for activity in suspicious_activity if "from" in activity['details']}
+
+    nmap_results = {}
+    for ip in unique_ips:
+        nmap_result = perform_nmap_scan(ip)
+        nmap_results[ip] = nmap_result
+
+
+    
+    
+    
+    
+    # Saving suspicious activity and nmap results to a file to file
     with open("suspicious_activity.log", "w") as log_file:
         for activity in suspicious_activity:
             log_file.write(f"{activity['type']}: {activity['details']}\n")
+
+        for ip, result in nmap_results.items():
+            log_file.write(f"{ip}: {result}\n")
+
 
 else:
     print("No suspicious activity detected.")
