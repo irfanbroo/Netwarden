@@ -49,6 +49,9 @@ def analyse_packets(data,map_ip_nmap):
             
             tcp_flags = packet.tcp.flags if hasattr(packet, 'tcp') else None
 
+            source_port = int(packet.tcp.srcport) if hasattr(packet, 'tcp') and hasattr(packet.tcp, 'srcport') else None
+
+            dest_port = int(packet.tcp.dstport) if hasattr(packet, 'tcp') and hasattr(packet.tcp, 'dstport') else None
 
             # Now we define our suspiscious patterns 
 
@@ -76,6 +79,15 @@ def analyse_packets(data,map_ip_nmap):
                     {"type": "Unusual internal traffic", "details": f"{source_ip} -> {dest_ip}"}
                 )
         
+            elif protocol == "TCP" and tcp_flags == "0x0018":  # PSH + ACK flags
+                if source_port in [4444, 31337] or dest_port in [4444, 31337]:
+                    suspicious_packets.append(
+                        {
+                        "type": "Potential Netcat usage",
+                        "details": f"Source {source_ip}:{source_port} -> Destination {dest_ip}:{dest_port}",
+                        }
+                    )          
+            
             # Spoofing Detection
             spoof_issues = detect_spoofing(packet,map_ip_nmap)
             for issue in spoof_issues:
