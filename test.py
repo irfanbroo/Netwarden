@@ -2,7 +2,34 @@ import pyshark
 import nmap
 
 
-def analyse_packets(data):
+def detect_spoofing(packet,mac_ip_map):
+    
+    issues = []
+
+    try:
+        
+        source_ip = packet.ip.src if hasattr(packet, 'ip') else None
+        source_mac = packet.eth.src if hasattr(packet, 'eth') else None
+
+        if source_ip and source_mac:
+            
+            # Check for IP/MAC mismatch
+            if source_ip in mac_ip_map and mac_ip_map[source_ip] != source_mac:
+                issue = f"IP/MAC mismatch: IP {source_ip} seen with MAC {source_mac}, expected {mac_ip_map[source_ip]}"
+                
+                if issue not in issues:
+                    issues.append(issue)
+            
+            else:
+                mac_ip_map[source_ip] = source_mac
+    except AttributeError as e:
+        print(f"Skipping packet due to missing attribute: {e}")
+    
+    return issues
+
+
+
+def analyse_packets(data,map_ip_nmap):
     
     suspicious_packets = []
     
@@ -49,6 +76,13 @@ def analyse_packets(data):
                     {"type": "Unusual internal traffic", "details": f"{source_ip} -> {dest_ip}"}
                 )
         
+            # Spoofing Detection
+            spoof_issues = detect_spoofing(packet,map_ip_nmap)
+            for issue in spoof_issues:
+                suspicious_packets.append({"type": "spoofing detected", "details": issue})
+
+
+
         except AttributeError as e:
             # Handling the Attribute error by skipping through
             print(f"Skipping packet due to missing attribute: {e}")
@@ -89,8 +123,9 @@ data=[]
 for packet in capture:
     data.append(packet)
 
+mac_ip_map = {}
 
-suspicious_activity = analyse_packets(data)
+suspicious_activity = analyse_packets(data,mac_ip_map)
 
 if suspicious_activity:
     print("Suspicious activity detected")
@@ -100,7 +135,11 @@ if suspicious_activity:
     
     # Perform Nmap scan for each suspicious source IP
 
-    unique_ips = {activity['details'].split()[-1] for activity in suspicious_activity if "from" in activity['details']}
+    unique_ips = set()
+    
+    for activity in suspicious_activity:
+        if "from" in activity['details']:
+            unique_ips.add(activity['details'].split("from")[-1].strip())
 
     nmap_results = {}
     for ip in unique_ips:
