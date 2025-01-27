@@ -1,6 +1,28 @@
 import pyshark
 import nmap
 
+
+
+# DNS Tunneling detection (Identify unusually long DNS queries or high-frequency DNS requests from a single source.) 
+def detect_dns_tunneling(packet, dns_tracker):
+    issues = []
+    try:
+        if packet.dns and packet.dns.qry_name:
+            query = packet.dns.qry_name
+            src_ip = packet.ip.src
+            dns_tracker[src_ip] = dns_tracker.get(src_ip, 0)+1
+            if len(query) > 225:
+                issues.append(f"Potential DNS tunneling detected: {query}")
+            if dns_tracker[src_ip] > 50:
+                issues.append(f"High DNS query frequency from {src_ip}")
+        
+    except AttributeError:
+        pass
+    return issues
+
+
+
+
 # Arp spoofing 
 def detect_arp_spoofing(packet, arp_cache):
     issues = []
@@ -53,7 +75,7 @@ def detect_spoofing(packet,mac_ip_map):
 
 
 
-def analyse_packets(data,map_ip_nmap,arp_cache):
+def analyse_packets(data,map_ip_nmap,arp_cache,dns_tracker):
     
     suspicious_packets = []
     
@@ -125,6 +147,9 @@ def analyse_packets(data,map_ip_nmap,arp_cache):
                 suspicious_packets.append({"type": "ARP spoofing detected", "details": issue})
 
 
+            dns_issues = detect_dns_tunneling(packet,dns_tracker)
+
+
         except AttributeError as e:
             # Handling the Attribute error by skipping through
             print(f"Skipping packet due to missing attribute: {e}")
@@ -167,7 +192,8 @@ for packet in capture:
 
 mac_ip_map = {}
 arp_cache = {}
-suspicious_activity = analyse_packets(data,mac_ip_map,arp_cache)
+dns_tracker = {}
+suspicious_activity = analyse_packets(data,mac_ip_map,arp_cache,dns_tracker)
 
 if suspicious_activity:
     print("Suspicious activity detected")
