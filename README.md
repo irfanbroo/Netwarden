@@ -1,11 +1,8 @@
-Here is a **very detailed and comprehensive README** that covers every aspect of the project in depth, leaving no detail out. This is designed to be as exhaustive as possible.
-
----
 
 # Network Traffic Monitoring and Threat Detection Tool
 
 **Version:** 1.0.0  
-**Author:** Your Name  
+**Author:** Irfan.S  
 **Date:** January 27, 2025  
 
 ---
