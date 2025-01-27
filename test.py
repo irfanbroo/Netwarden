@@ -1,6 +1,30 @@
 import pyshark
 import nmap
 
+# Arp spoofing 
+def detect_arp_spoofing(packet, arp_cache):
+    issues = []
+    try:
+
+    
+        if packet.eth.type  == "0x0806":  # Check if it's an ARP packet
+            arp_src_ip = packet.arp.src_proto_ipv4
+            arp_src_mac = packet.arp.src_hw_mac
+            
+            if arp_src_ip in arp_cache and arp_cache[arp_src_ip] != arp_src_mac:
+                issue = f"ARP spoofing detected: IP {arp_src_ip} seen with MAC {arp_src_mac}, expected {arp_cache[arp_src_ip]}"
+                if issue not in issue:
+                    issues.append(issue)
+            else:
+                arp_cache[arp_src_ip] = arp_src_mac
+    except AttributeError as e:
+        print(f"Skipping ARP packet due to missing attribute: {e}")
+    
+    return issues
+    
+
+
+
 
 def detect_spoofing(packet,mac_ip_map):
     
@@ -29,7 +53,7 @@ def detect_spoofing(packet,mac_ip_map):
 
 
 
-def analyse_packets(data,map_ip_nmap):
+def analyse_packets(data,map_ip_nmap,arp_cache):
     
     suspicious_packets = []
     
@@ -94,6 +118,12 @@ def analyse_packets(data,map_ip_nmap):
                 suspicious_packets.append({"type": "spoofing detected", "details": issue})
 
 
+            # ARP Spoofing Detection
+
+            arp_issues = detect_arp_spoofing(packet, arp_cache)
+            for issue in arp_issues:
+                suspicious_packets.append({"type": "ARP spoofing detected", "details": issue})
+
 
         except AttributeError as e:
             # Handling the Attribute error by skipping through
@@ -136,8 +166,8 @@ for packet in capture:
     data.append(packet)
 
 mac_ip_map = {}
-
-suspicious_activity = analyse_packets(data,mac_ip_map)
+arp_cache = {}
+suspicious_activity = analyse_packets(data,mac_ip_map,arp_cache)
 
 if suspicious_activity:
     print("Suspicious activity detected")
