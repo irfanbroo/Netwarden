@@ -146,8 +146,12 @@ def analyse_packets(data,map_ip_nmap,arp_cache,dns_tracker):
             for issue in arp_issues:
                 suspicious_packets.append({"type": "ARP spoofing detected", "details": issue})
 
+            # DNS Tunneling detection
 
             dns_issues = detect_dns_tunneling(packet,dns_tracker)
+            for issue in dns_issues:
+                suspicious_packets.append({"type": "DNS Tunneling", "details": issue})
+            
 
 
         except AttributeError as e:
