@@ -1,9 +1,7 @@
 
 # Network Traffic Monitoring and Threat Detection Tool
 
-**Version:** 1.0.0  
-**Author:** Irfan.S  
-**Date:** January 27, 2025  
+"Keeping Your Network Safe, One Packet at a Time"
 
 ---
 
