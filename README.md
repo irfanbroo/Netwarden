@@ -1,216 +1,279 @@
+Here is an **even more detailed and comprehensive README** that goes into greater depth about the project, its features, usage, and examples.
 
 ---
 
-# Netwarden
-
-Netwarden is a network monitoring tool designed to detect suspicious network activities, capture real-time network packets, and perform security audits using Nmap. It is useful for network administrators, penetration testers, and security enthusiasts. The tool aims to identify abnormal traffic patterns and security threats, while also providing detailed reports for further analysis.
-
-## Features
-
-- **Real-time Packet Capture**: Continuously captures network packets from a specified network interface, such as Wi-Fi or Ethernet.
-- **Suspicious Activity Detection**: Analyzes network traffic for suspicious patterns such as large packet sizes, unusual internal traffic, and malicious DNS queries.
-- **Nmap Scanning**: Automatically performs Nmap scans on suspicious IP addresses to gather more information on potential threats.
-- **Customizable Detection Patterns**: Easily modify or add new detection patterns to identify specific types of suspicious network activity.
-- **Detailed Logs**: Saves detected suspicious activities and Nmap scan results to a log file for further analysis.
-- **Cross-Platform**: Works across major operating systems like Windows, Linux, and macOS.
+# Network Traffic Monitoring and Threat Detection Tool
 
 ## Table of Contents
-
 1. [Introduction](#introduction)
 2. [Features](#features)
-3. [Installation](#installation)
-4. [Usage](#usage)
-5. [How It Works](#how-it-works)
-6. [Customization](#customization)
-7. [Example Output](#example-output)
-8. [Logging](#logging)
-9. [Contributing](#contributing)
-10. [License](#license)
-11. [Contact](#contact)
+3. [How It Works](#how-it-works)
+4. [Installation Guide](#installation-guide)
+    - [Prerequisites](#prerequisites)
+    - [Installation Steps](#installation-steps)
+5. [Usage Instructions](#usage-instructions)
+    - [Running the Script](#running-the-script)
+    - [Configuration Options](#configuration-options)
+6. [Detailed Functionality](#detailed-functionality)
+    - [Threat Detection Algorithms](#threat-detection-algorithms)
+    - [Packet Analysis Workflow](#packet-analysis-workflow)
+7. [Example Outputs](#example-outputs)
+    - [Terminal Output](#terminal-output)
+    - [Log File Example](#log-file-example)
+8. [Potential Use Cases](#potential-use-cases)
+9. [Known Limitations](#known-limitations)
+10. [Troubleshooting](#troubleshooting)
+11. [Future Enhancements](#future-enhancements)
+12. [Acknowledgments](#acknowledgments)
+13. [License](#license)
+
+---
 
 ## Introduction
 
-Netwarden is designed to provide a simple yet powerful way to monitor and analyze network traffic for signs of suspicious or malicious activity. By using `pyshark` for packet capture and `nmap` for vulnerability scanning, Netwarden helps system administrators and security experts detect potential threats in real-time.
+In today's world of increasing cyber threats, monitoring network traffic and identifying malicious activities are essential for maintaining a secure environment. This **Network Traffic Monitoring and Threat Detection Tool** provides a comprehensive solution for analyzing live network traffic and detecting anomalies, such as:
 
-This tool can be used to analyze network traffic, perform vulnerability assessments, and identify potential attack vectors such as SYN scans or DNS poisoning.
+- DNS tunneling
+- ARP spoofing
+- IP/MAC spoofing
+- SYN scans
+- Suspicious DNS queries and unusual patterns
 
-## Installation
+The tool integrates packet capture using `pyshark` and vulnerability scanning using `nmap`. It is designed for system administrators, network engineers, and cybersecurity professionals who need an efficient way to monitor and protect their networks.
+
+---
+
+## Features
+
+### Key Highlights
+- **Real-Time Packet Capture**:
+  Monitor live traffic on any network interface, with analysis performed in real-time.
+  
+- **Advanced Threat Detection**:
+  Detects:
+  - DNS tunneling
+  - ARP spoofing
+  - SYN scans
+  - Unusual network traffic patterns
+  - Suspicious DNS queries
+
+- **Nmap Integration**:
+  Automatically scans flagged IP addresses to identify open ports and services for further investigation.
+
+- **Comprehensive Logging**:
+  Generates detailed logs of detected threats and Nmap results for auditing and reporting.
+
+- **Customizable Rules**:
+  Easily modify detection rules to tailor the tool for specific environments or requirements.
+
+### Why Use This Tool?
+- **Lightweight**: No heavy dependencies or complex configurations required.
+- **Modular Design**: Extend functionality or integrate with existing tools with minimal effort.
+- **Actionable Insights**: Provides detailed threat descriptions for quick decision-making.
+
+---
+
+## How It Works
+
+1. **Packet Capture**: 
+   Traffic is captured using `pyshark.LiveCapture` on a specified interface.
+   
+2. **Packet Analysis**:
+   Each packet is analyzed using detection algorithms to identify suspicious activity.
+
+3. **Threat Detection**:
+   - Detects DNS tunneling by monitoring query lengths and frequency.
+   - Identifies ARP spoofing by checking IP/MAC mappings.
+   - Flags SYN scans and other anomalies in TCP traffic.
+   - Tracks unusual internal traffic patterns.
+
+4. **Nmap Scanning**:
+   Suspicious source IPs are scanned for open ports and services using Nmap.
+
+5. **Logging and Reporting**:
+   All findings are saved to `suspicious_activity.log` for future reference.
+
+---
+
+## Installation Guide
 
 ### Prerequisites
 
-To use Netwarden, you need the following tools and libraries:
+1. **Python 3.x**:
+   Ensure Python 3.x is installed on your system.
+   
+2. **Wireshark/tshark**:
+   Install Wireshark and ensure the `tshark` command-line tool is in your PATH.
 
-- **Python 3.x**: The latest version of Python.
-- **pyshark**: A Python wrapper for the Wireshark network protocol analyzer to capture packets.
-- **nmap**: A powerful network scanning tool for identifying active devices, open ports, and potential vulnerabilities.
-- **Root or Administrator Privileges**: Required for packet capturing on most systems.
+3. **Nmap**:
+   Install Nmap for scanning suspicious IPs.
 
-### Install Dependencies
-
-1. **Clone the Repository**:
-   To begin, clone the repository to your local machine:
+4. **Python Libraries**:
+   Install the required Python libraries:
    ```bash
-   git clone https://github.com/irfanbroo/Netwarden.git
-   cd Netwarden
+   pip install pyshark python-nmap
    ```
 
-2. **Create a Virtual Environment** (optional but recommended):
-   It's a good practice to use a virtual environment to manage dependencies.
+### Installation Steps
+
+1. Clone the repository:
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   git clone https://github.com/your-repo/network-analysis.git
+   cd network-analysis
    ```
 
-3. **Install Python Dependencies**:
-   Install the required Python packages using `pip`:
+2. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Install Nmap**:
-
-   - **Linux**:
-     Use the following command to install Nmap:
-     ```bash
-     sudo apt-get install nmap
-     ```
-
-   - **Windows**:
-     Download and install Nmap from the [official website](https://nmap.org/download.html).
-
-   - **macOS**:
-     Use Homebrew to install Nmap:
-     ```bash
-     brew install nmap
-     ```
-
-5. **Verify the Installation**:
-   To verify that everything is installed properly, run the following command:
+3. Run the script:
    ```bash
-   python netwarden.py
+   python network_analysis.py
    ```
 
-   If everything is set up correctly, the script will start monitoring network traffic.
+---
 
-## Usage
+## Usage Instructions
 
-### Running Netwarden
+### Running the Script
 
-1. **Start the Script**:
-   Simply run the `netwarden.py` script to begin capturing network packets and analyzing suspicious activities:
-   ```bash
-   python netwarden.py
+To start monitoring traffic:
+```bash
+python network_analysis.py
+```
+
+### Configuration Options
+
+1. **Set the Network Interface**:
+   Modify the interface in the script:
+   ```python
+   capture = pyshark.LiveCapture(interface='Wi-Fi')
    ```
 
-2. **Network Interface**:
-   The script captures packets from the default network interface (`Wi-Fi` by default). You can change this in the script to use Ethernet or any other interface on your machine.
+2. **Adjust Detection Thresholds**:
+   Update thresholds in functions such as `detect_dns_tunneling` or `detect_arp_spoofing` for your environment.
 
-3. **Suspicious Activity Detection**:
-   Once the script begins capturing packets, it will analyze the traffic for suspicious activity. If any suspicious activity is detected (e.g., SYN scans, unusual DNS queries, large packets), it will print the details to the console and log them in a file.
+---
 
-4. **Perform Nmap Scans**:
-   For any suspicious IP addresses detected during packet analysis, the script will automatically perform an Nmap scan. The scan results will also be logged for later inspection.
+## Detailed Functionality
 
-### Example Output
+### Threat Detection Algorithms
 
-```text
+#### 1. DNS Tunneling Detection
+- **What It Does**:
+  - Identifies unusually long DNS queries (>225 characters).
+  - Tracks high-frequency DNS requests (>50 requests per IP).
+- **Why**: DNS tunneling is often used to exfiltrate data or establish malicious communication channels.
+
+#### 2. ARP Spoofing Detection
+- **What It Does**:
+  - Monitors IP/MAC mappings for inconsistencies.
+- **Why**: ARP spoofing allows attackers to intercept or redirect network traffic.
+
+#### 3. SYN Scan Detection
+- **What It Does**:
+  - Flags packets with `SYN` flags (e.g., reconnaissance scans).
+- **Why**: SYN scans are a common precursor to attacks.
+
+#### 4. IP/MAC Spoofing Detection
+- **What It Does**:
+  - Flags mismatches between observed and expected IP/MAC mappings.
+- **Why**: Spoofing can be used to impersonate trusted devices.
+
+### Packet Analysis Workflow
+1. Capture packets from the interface.
+2. Analyze each packet based on predefined detection rules.
+3. Log all suspicious activities and flag suspicious IPs for further scanning.
+
+---
+
+## Example Outputs
+
+### Terminal Output
+```plaintext
 Suspicious activity detected:
-Suspicious DNS query: malicious.example.com
-Potential SYN scan: from 192.168.1.100
-Large packet size: Size: 1200
-Unusual internal traffic: 192.168.1.100 -> 10.0.0.1
+- DNS Tunneling: Potential DNS tunneling detected: maliciousquery.example.com
+- ARP Spoofing: IP 192.168.1.2 seen with MAC aa:bb:cc:dd:ee:ff, expected ff:ee:dd:cc:bb:aa
+- SYN Scan: From 192.168.1.5
 
-Performing Nmap scan on 192.168.1.100...
-Nmap scan result: {'host': {'status': {'state': 'up'}, 'addresses': {'ipv4': '192.168.1.100'}}}
+Performing Nmap scan on 192.168.1.5...
 ```
 
-The above output shows that a suspicious DNS query was detected, followed by a SYN scan from the IP `192.168.1.100`. The tool performs an Nmap scan to gather more information about this IP.
-
-### Log File
-
-All suspicious activities and Nmap scan results are saved in the `suspicious_activity.log` file for later review:
-```
-Suspicious DNS query: malicious.example.com
-Potential SYN scan: from 192.168.1.100
-Large packet size: Size: 1200
-Unusual internal traffic: 192.168.1.100 -> 10.0.0.1
+### Log File Example (`suspicious_activity.log`)
+```plaintext
+DNS Tunneling: Potential DNS tunneling detected: maliciousquery.example.com
+ARP Spoofing: IP 192.168.1.2 seen with MAC aa:bb:cc:dd:ee:ff, expected ff:ee:dd:cc:bb:aa
+SYN Scan: From 192.168.1.5
 
 Nmap Scan Results:
-192.168.1.100: {'host': {'status': {'state': 'up'}, 'addresses': {'ipv4': '192.168.1.100'}}}
+192.168.1.5:
+  Ports:
+    22 (SSH): Open
+    80 (HTTP): Open
 ```
 
-## How It Works
+---
 
-Netwarden works by capturing packets from a specified network interface using the `pyshark` library. It then analyzes the captured packets for suspicious patterns based on predefined rules.
+## Potential Use Cases
 
-1. **Packet Capture**: The tool listens for network traffic on the selected interface (e.g., Wi-Fi or Ethernet).
-2. **Suspicious Activity Detection**: The script checks for specific patterns like:
-   - **DNS Queries**: Identifies malicious or phishing queries.
-   - **SYN Scans**: Detects potential SYN floods or port scanning activities.
-   - **Large Packet Sizes**: Flags unusually large packets which could indicate data exfiltration attempts.
-   - **Unusual Internal Traffic**: Flags traffic between certain internal subnets that may indicate lateral movement.
-3. **Nmap Scan**: For each suspicious IP address detected, an Nmap scan is performed to gather more information about open ports, services, and potential vulnerabilities.
-4. **Logging**: Detected suspicious activities and the results of Nmap scans are logged for later analysis.
+1. **Enterprise Security**:
+   Monitor corporate networks for threats like ARP spoofing or DNS tunneling.
+2. **Incident Response**:
+   Use logs and Nmap scans for post-incident analysis.
+3. **Educational Tool**:
+   Demonstrate packet analysis and threat detection techniques.
 
-## Customization
+---
 
-### Add Suspicious DNS Patterns
+## Known Limitations
 
-You can customize the detection of suspicious DNS queries by adding new patterns to the `suspicious_dns_patterns` list in the `analyse_packets` function:
-```python
-suspicious_dns_patterns = ["malicious", "phishing", "dangerous", "example.com"]
-```
+- **Encrypted Traffic**:
+  Cannot analyze encrypted traffic (e.g., HTTPS).
+- **False Positives**:
+  May flag benign activity as suspicious in certain environments.
 
-### Modify TCP Flag Detection
+---
 
-The script currently detects potential SYN scans based on the `tcp.flags` attribute. You can modify this logic to detect other types of attacks by adjusting the `tcp_flags` check.
+## Troubleshooting
 
-### Changing the Network Interface
+1. **Permission Issues**:
+   Run with administrative privileges:
+   ```bash
+   sudo python network_analysis.py
+   ```
 
-By default, Netwarden listens on the `Wi-Fi` network interface. To capture packets from a different interface, change the `interface` parameter in the `LiveCapture` function:
-```python
-capture = pyshark.LiveCapture(interface='eth0')  # For Ethernet interface
-```
+2. **`tshark` Not Found**:
+   Ensure Wireshark is installed and `tshark` is in your PATH.
 
-## Example Configuration
+3. **Nmap Errors**:
+   Verify Nmap is installed and accessible.
 
-Here’s an example of how to configure custom patterns and modify the interface to capture packets from a different network:
+---
 
-```python
-def analyse_packets(data):
-    suspicious_dns_patterns = ["malicious", "example.com", "phishing"]
-    capture = pyshark.LiveCapture(interface='eth0')
-    # Continue with the rest of the logic...
-```
+## Future Enhancements
 
-## Logging
+1. **HTTPS Decryption**:
+   Add support for analyzing encrypted traffic.
+2. **Machine Learning**:
+   Integrate anomaly detection models.
+3. **Web Dashboard**:
+   Build a real-time web interface for visualization.
 
-Netwarden logs all suspicious activities and Nmap scan results to a file (`suspicious_activity.log`). This allows for a thorough review of detected issues and helps track potential security concerns over time.
+---
 
-The log file contains entries for each suspicious activity detected, followed by any relevant Nmap results:
-```
-Suspicious DNS query: phishing.example.com
-Potential SYN scan: from 192.168.1.50
-Large packet size: Size: 1500
-Unusual internal traffic: 192.168.1.50 -> 10.0.0.5
-```
+## Acknowledgments
 
-## Contributing
+Thanks to:
+- [Wireshark](https://www.wireshark.org/)
+- [Nmap](https://nmap.org/)
 
-We welcome contributions to Netwarden! If you'd like to contribute, please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes and commit them (`git commit -am 'Add new feature'`).
-4. Push to your fork (`git push origin feature-branch`).
-5. Open a Pull Request to merge your changes into the main repository.
+---
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the LICENSE file for details.
 
-## Contact
+--- 
 
-For any questions, issues, or feedback, feel free to open an issue or contact the project maintainers directly.
-
----
+Let me know if you'd like further expansion!
