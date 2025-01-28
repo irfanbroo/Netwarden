@@ -109,8 +109,8 @@ This tool operates in four main stages:
 ### 4.2 Setup Instructions
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/network-analysis.git
-   cd network-analysis
+   git clone https://github.com/irfanbroo/Netwarden.git
+   cd Netwarden
    ```
 2. Install dependencies:
    ```bash
