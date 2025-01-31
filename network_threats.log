@@ -1,0 +1,11 @@
+Suspicious activity detected
+suspicious DNS query: malicious-site.example.com
+Potential SYN scan: from 192.168.1.10
+Large packet size: Size: 1200
+Unusual internal traffic: 192.168.1.15 -> 10.0.0.5
+Potential Netcat usage: Source 192.168.1.20:4444 -> Destination 10.0.0.10:31337
+spoofing detected: IP/MAC mismatch: IP 192.168.1.30 seen with MAC 00:11:22:33:44:55, expected 66:77:88:99:AA:BB
+ARP spoofing detected: IP 192.168.1.40 seen with MAC 00:11:22:33:44:56, expected 00:11:22:33:44:55
+DNS Tunneling: Potential DNS tunneling detected: suspicious-tunnel.example.com
+DNS Tunneling: High DNS query frequency from 192.168.1.50
+Error during Nmap scan: 'NoneType' object is not iterable
