@@ -141,7 +141,7 @@ Set detection thresholds in the corresponding functions:
 ### 5.2 Running the Tool
 Run the script using:
 ```bash
-python network_analysis.py
+python netwarden.py
 ```
 
 ---
